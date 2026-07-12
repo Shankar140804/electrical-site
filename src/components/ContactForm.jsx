@@ -78,7 +78,7 @@ const ContactForm = () => {
                 <div className="form-field">
                     <label className="form-label" htmlFor="phone">Phone Number</label>
                     <input id="phone" name="phone" type="tel" className="form-input"
-                        placeholder="+44 (0) 1234 567890" value={formData.phone} onChange={handleChange} />
+                        placeholder="+91 99944 87395" value={formData.phone} onChange={handleChange} />
                 </div>
                 <div className="form-field">
                     <label className="form-label" htmlFor="company">Company</label>

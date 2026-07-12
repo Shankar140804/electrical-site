@@ -49,7 +49,7 @@ const Contact = () => (
                                 </div>
                                 <div className="ci-text">
                                     <h4>Phone</h4>
-                                    <p><a href="tel:+441234567890">+44 (0) 1234 567890</a></p>
+                                    <p><a href="tel:+919994487395">+91 99944 87395</a></p>
                                     <p style={{ marginTop: '4px', fontSize: '0.78rem', color: 'rgba(255,255,255,0.4)' }}>Monday to Friday, 08:30 - 17:30</p>
                                 </div>
                             </div>
@@ -63,7 +63,7 @@ const Contact = () => (
                                 </div>
                                 <div className="ci-text">
                                     <h4>Email</h4>
-                                    <p><a href="mailto:info@voltgrid-engineering.co.uk">info@voltgrid-engineering.co.uk</a></p>
+                                    <p><a href="mailto:energreenvolt@gmail.com">energreenvolt@gmail.com</a></p>
                                     <p style={{ marginTop: '4px' }}><a href="mailto:projects@voltgrid-engineering.co.uk">projects@voltgrid-engineering.co.uk</a></p>
                                 </div>
                             </div>
