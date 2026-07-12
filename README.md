@@ -14,3 +14,16 @@ The React Compiler is not enabled on this template because of its impact on dev 
 ## Expanding the ESLint configuration
 
 If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+
+## Contact form email setup
+
+The contact form posts to the Vercel Serverless Function at `/api/contact`.
+
+Set these environment variables in Vercel:
+
+- `GMAIL_USER`
+- `GMAIL_APP_PASSWORD`
+- `CONTACT_RECIPIENT_EMAIL` to receive enquiries, defaulting to `energreenvolt@gmail.com`
+- `MAIL_FROM_NAME` if you want to override the sender display name
+
+The frontend can optionally point to a different API base during local development with `VITE_CONTACT_API_URL`.

@@ -1,67 +1,111 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+
+const initialFormData = {
+    name: '',
+    email: '',
+    phone: '',
+    company: '',
+    service: '',
+    message: '',
+};
+
+const CONTACT_API_URL = import.meta.env.VITE_CONTACT_API_URL || '/api/contact';
 
 const ContactForm = () => {
-    const [formData, setFormData] = useState({
-        name: '', email: '', phone: '', company: '', service: '', message: ''
-    });
+    const [formData, setFormData] = useState(initialFormData);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [isSubmitted, setIsSubmitted] = useState(false);
     const [errors, setErrors] = useState({});
+    const [status, setStatus] = useState({ type: 'idle', message: '' });
 
     const validate = () => {
         const e = {};
-        if (!formData.name.trim()) e.name = 'Name is required';
-        if (!formData.email.trim() || !/\S+@\S+\.\S+/.test(formData.email)) e.email = 'Valid email is required';
-        if (!formData.message.trim()) e.message = 'Please describe your requirements';
+        if (!formData.name.trim()) e.name = 'Full name is required';
+        if (!formData.email.trim()) e.email = 'Email is required';
+        else if (!/\S+@\S+\.\S+/.test(formData.email)) e.email = 'Please enter a valid email address';
+        if (!formData.phone.trim()) e.phone = 'Phone number is required';
+        if (!formData.message.trim()) e.message = 'Project details are required';
         return e;
     };
 
     const handleChange = (e) => {
         setFormData(f => ({ ...f, [e.target.name]: e.target.value }));
         if (errors[e.target.name]) setErrors(er => ({ ...er, [e.target.name]: '' }));
+        if (status.type !== 'idle') setStatus({ type: 'idle', message: '' });
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         const errs = validate();
-        if (Object.keys(errs).length > 0) { setErrors(errs); return; }
-        setIsSubmitting(true);
-        await new Promise(r => setTimeout(r, 1800));
-        setIsSubmitting(false);
-        setIsSubmitted(true);
-    };
+        if (Object.keys(errs).length > 0) {
+            setErrors(errs);
+            return;
+        }
 
-    if (isSubmitted) return (
-        <div style={{ textAlign: 'center', padding: '60px 40px' }}>
-            <div style={{
-                width: 72, height: 72, borderRadius: '50%',
-                background: 'rgba(34,197,94,0.1)', border: '2px solid rgba(34,197,94,0.3)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                margin: '0 auto 22px'
-            }}>
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2.5">
-                    <polyline points="20 6 9 17 4 12"/>
-                </svg>
-            </div>
-            <h3 style={{ color: 'var(--clr-primary)', marginBottom: 10 }}>Thank You!</h3>
-            <p style={{ color: 'var(--clr-text-muted)', marginBottom: 28, fontSize: '0.95rem' }}>
-                We've received your enquiry and will be in touch within one business day.
-            </p>
-            <button className="btn btn-outline" onClick={() => { setIsSubmitted(false); setFormData({ name:'',email:'',phone:'',company:'',service:'',message:'' }); }}>
-                Send Another Enquiry
-            </button>
-        </div>
-    );
+        setIsSubmitting(true);
+
+        try {
+            const response = await fetch(CONTACT_API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    ...formData,
+                    submittedAt: new Date().toISOString(),
+                }),
+            });
+
+            const payload = await response.json().catch(() => null);
+
+            if (!response.ok) {
+                throw new Error(payload?.message || 'Unable to send enquiry');
+            }
+
+            setFormData(initialFormData);
+            setErrors({});
+            setStatus({
+                type: 'success',
+                message: 'Thank you for contacting Greenvolts. Our engineering team will contact you shortly.',
+            });
+        } catch {
+            setStatus({
+                type: 'error',
+                message: 'Unable to send your enquiry. Please try again.',
+            });
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
 
     return (
         <form onSubmit={handleSubmit} noValidate>
             <h3>Send an Enquiry</h3>
+
+            {status.message && (
+                <div
+                    role={status.type === 'error' ? 'alert' : 'status'}
+                    aria-live="polite"
+                    style={{
+                        margin: '0 0 18px',
+                        padding: '14px 16px',
+                        borderRadius: '12px',
+                        border: status.type === 'error' ? '1px solid rgba(239,68,68,0.35)' : '1px solid rgba(34,197,94,0.35)',
+                        background: status.type === 'error' ? 'rgba(239,68,68,0.08)' : 'rgba(34,197,94,0.08)',
+                        color: 'var(--clr-text)',
+                        fontSize: '0.95rem',
+                        lineHeight: 1.5,
+                    }}
+                >
+                    {status.message}
+                </div>
+            )}
 
             <div className="form-row">
                 <div className="form-field">
                     <label className="form-label" htmlFor="name">Full Name *</label>
                     <input id="name" name="name" type="text" className="form-input"
                         placeholder="John Smith" value={formData.name} onChange={handleChange}
+                        required
                         style={errors.name ? { borderColor: '#ef4444' } : {}} />
                     {errors.name && <span style={{ fontSize: '0.78rem', color: '#ef4444' }}>{errors.name}</span>}
                 </div>
@@ -69,6 +113,7 @@ const ContactForm = () => {
                     <label className="form-label" htmlFor="email">Email Address *</label>
                     <input id="email" name="email" type="email" className="form-input"
                         placeholder="j.smith@company.co.uk" value={formData.email} onChange={handleChange}
+                        required
                         style={errors.email ? { borderColor: '#ef4444' } : {}} />
                     {errors.email && <span style={{ fontSize: '0.78rem', color: '#ef4444' }}>{errors.email}</span>}
                 </div>
@@ -78,7 +123,10 @@ const ContactForm = () => {
                 <div className="form-field">
                     <label className="form-label" htmlFor="phone">Phone Number</label>
                     <input id="phone" name="phone" type="tel" className="form-input"
-                        placeholder="+91 99944 87395" value={formData.phone} onChange={handleChange} />
+                        placeholder="+91 99944 87395" value={formData.phone} onChange={handleChange}
+                        required
+                        style={errors.phone ? { borderColor: '#ef4444' } : {}} />
+                    {errors.phone && <span style={{ fontSize: '0.78rem', color: '#ef4444' }}>{errors.phone}</span>}
                 </div>
                 <div className="form-field">
                     <label className="form-label" htmlFor="company">Company</label>
@@ -105,6 +153,7 @@ const ContactForm = () => {
                 <textarea id="message" name="message" className="form-input"
                     placeholder="Please describe your project, timeline, and any specific requirements..."
                     value={formData.message} onChange={handleChange}
+                    required
                     style={errors.message ? { borderColor: '#ef4444' } : {}} />
                 {errors.message && <span style={{ fontSize: '0.78rem', color: '#ef4444' }}>{errors.message}</span>}
             </div>
