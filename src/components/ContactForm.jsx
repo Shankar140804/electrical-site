@@ -67,7 +67,8 @@ const ContactForm = () => {
                 type: 'success',
                 message: 'Thank you for contacting Greenvolts. Our engineering team will contact you shortly.',
             });
-        } catch {
+        } catch (error) {
+            console.error('EmailJS contact form failed:', error);
             setStatus({
                 type: 'error',
                 message: 'Unable to send your enquiry. Please try again.',
