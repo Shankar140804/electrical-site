@@ -23,7 +23,7 @@ Set these environment variables in Vercel:
 
 - `GMAIL_USER`
 - `GMAIL_APP_PASSWORD`
-- `CONTACT_RECIPIENT_EMAIL` to receive enquiries, defaulting to `energreenvolt@gmail.com`
+- `CONTACT_RECIPIENT_EMAIL` to receive enquiries, defaulting to `smartlover143shankar@gmail.com`
 - `MAIL_FROM_NAME` if you want to override the sender display name
 
 The frontend can optionally point to a different API base during local development with `VITE_CONTACT_API_URL`.

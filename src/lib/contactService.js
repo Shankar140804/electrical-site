@@ -2,7 +2,7 @@
 
 import nodemailer from 'nodemailer';
 
-const COMPANY_EMAIL = process.env.CONTACT_RECIPIENT_EMAIL || 'energreenvolt@gmail.com';
+const COMPANY_EMAIL = process.env.CONTACT_RECIPIENT_EMAIL || 'smartlover143shankar@gmail.com';
 const SMTP_USER = process.env.GMAIL_USER;
 const SMTP_APP_PASSWORD = process.env.GMAIL_APP_PASSWORD;
 const MAIL_FROM_NAME = process.env.MAIL_FROM_NAME || 'Greenvolts Website';

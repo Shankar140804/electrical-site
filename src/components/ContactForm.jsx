@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import emailjs from '@emailjs/browser';
 
 const initialFormData = {
     name: '',
@@ -9,7 +10,9 @@ const initialFormData = {
     message: '',
 };
 
-const CONTACT_API_URL = import.meta.env.VITE_CONTACT_API_URL || '/api/contact';
+const EMAILJS_SERVICE_ID = 'service_ppbnbg4';
+const EMAILJS_TEMPLATE_ID = 'template_2j0bjjs';
+const EMAILJS_PUBLIC_KEY = '63ZuwAXogCCyQc8cJ';
 
 const ContactForm = () => {
     const [formData, setFormData] = useState(initialFormData);
@@ -44,22 +47,19 @@ const ContactForm = () => {
         setIsSubmitting(true);
 
         try {
-            const response = await fetch(CONTACT_API_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
+            await emailjs.send(
+                EMAILJS_SERVICE_ID,
+                EMAILJS_TEMPLATE_ID,
+                {
+                    full_name: formData.name.trim(),
+                    email: formData.email.trim(),
+                    phone: formData.phone.trim(),
+                    company: formData.company.trim(),
+                    service: formData.service.trim(),
+                    message: formData.message.trim(),
                 },
-                body: JSON.stringify({
-                    ...formData,
-                    submittedAt: new Date().toISOString(),
-                }),
-            });
-
-            const payload = await response.json().catch(() => null);
-
-            if (!response.ok) {
-                throw new Error(payload?.message || 'Unable to send enquiry');
-            }
+                EMAILJS_PUBLIC_KEY,
+            );
 
             setFormData(initialFormData);
             setErrors({});
